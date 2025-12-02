@@ -19,7 +19,11 @@ $(addprefix $(DEST)/, $(MAIN_TARGET)): $(DEST)/% :
 
 	# Create a new dir and copy all ONIE-platform-string-named dirs into it
 	mkdir ./device
-	cp -r -L ../../../device/*/* ./device/
+	for dir in ../../../device/*/*; do \
+		if [[ "$$dir" == *"x86_64-kvm_x86_64-r0-bmc"* ]]; then \
+			cp -r -L "$$dir" ./device/x86_64-kvm_x86_64-r0; \
+		fi; \
+	done
 
 	if [ "$(CONFIGURED_PLATFORM)" = "mellanox" ]; then \
 		for sai_profile in `find device/ -name sai.profile | grep simx`; do \
@@ -28,7 +32,7 @@ $(addprefix $(DEST)/, $(MAIN_TARGET)): $(DEST)/% :
 	fi;
 
 	# Create hwsku for virtual switch
-	for d in `find -L ../../../device -maxdepth 3 -mindepth 3 -type d | grep -vE "(plugins|led-code|sonic_platform)"`; do \
+	for d in `find -L ../../../device -maxdepth 3 -mindepth 3 -type d | grep -vE "(plugins|led-code|sonic_platform)" | grep "ast2720"`; do \
 		# check if hwsku dir exists, if yes, then continue
 		if [ -d device/x86_64-kvm_x86_64-r0/$$(basename $$d) ]; then \
 			cp ./sai.vs_profile device/x86_64-kvm_x86_64-r0/$$(basename $$d)/sai.profile; \

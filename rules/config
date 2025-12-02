@@ -10,7 +10,7 @@
 # SONIC_CONFIG_BUILD_JOBS - set number of jobs for parallel build.
 # Corresponding -j argument will be passed to make command inside docker
 # container.
-SONIC_CONFIG_BUILD_JOBS = 1
+SONIC_CONFIG_BUILD_JOBS = $(shell nproc)
 
 # SONIC_CONFIG_MAKE_JOBS - set number of parallel make jobs per package.
 # Corresponding -j argument will be passed to make/dpkg commands that build separate packages
@@ -46,7 +46,7 @@ CHANGE_DEFAULT_PASSWORD ?= n
 DEFAULT_USERNAME = admin
 
 # DEFAULT_PASSWORD - default password for installer build
-DEFAULT_PASSWORD = YourPaSsWoRd
+DEFAULT_PASSWORD = 123
 
 # ENABLE_ZTP - installs Zero Touch Provisioning support.
 # ENABLE_ZTP = y
@@ -67,7 +67,7 @@ DEFAULT_PASSWORD = YourPaSsWoRd
 
 # SONIC_USE_PDDF_FRAMEWORK - Use PDDF generic drivers and plugins
 # Uncomment next line to enable:
-SONIC_USE_PDDF_FRAMEWORK = y
+SONIC_USE_PDDF_FRAMEWORK = n
 
 # SONIC_ROUTING_STACK - specify the routing-stack being elected to drive SONiC's control-plane.
 # Supported routing stacks on SONiC are:
@@ -79,7 +79,7 @@ SONIC_ROUTING_STACK = frr
 # ENABLE_SYNCD_RPC = y
 
 # Enable Origanization Extensions - Specific to the deployment scenarios of the Organization
-ENABLE_ORGANIZATION_EXTENSIONS = y
+ENABLE_ORGANIZATION_EXTENSIONS = n
 
 # Debugging option allows sonic debian packages to get built including symbols
 # information. Profiling option, disables compiler optimizations (-O0) as well
@@ -119,13 +119,13 @@ SONIC_DPKG_CACHE_SOURCE ?= /var/cache/sonic/artifacts
 DEFAULT_VS_PREPARE_MEM = yes
 
 # INCLUDE_SYSTEM_GNMI - build docker-sonic-gnmi for system gnmi support
-INCLUDE_SYSTEM_GNMI = y
+INCLUDE_SYSTEM_GNMI = n
 
 # INCLUDE_SYSTEM_BMP - build docker-sonic-bmp for system bmp support
-INCLUDE_SYSTEM_BMP = y
+INCLUDE_SYSTEM_BMP = n
 
 # INCLUDE_SYSTEM_EVENTD - build docker-eventd for system eventd support
-INCLUDE_SYSTEM_EVENTD = y
+INCLUDE_SYSTEM_EVENTD = n
 
 # INCLUDE_SYSTEM_TELEMETRY - build docker-sonic-telemetry for system telemetry support
 INCLUDE_SYSTEM_TELEMETRY = n
@@ -134,23 +134,23 @@ INCLUDE_SYSTEM_TELEMETRY = n
 INCLUDE_ICCPD = n
 
 # INCLUDE_SFLOW - build docker-sflow for sFlow support
-INCLUDE_SFLOW = y
+INCLUDE_SFLOW = n
 
 # INCLUDE_MGMT_FRAMEWORK - build docker-sonic-mgmt-framework for CLI and REST server support
-INCLUDE_MGMT_FRAMEWORK = y
+INCLUDE_MGMT_FRAMEWORK = n
 
 # ENABLE_HOST_SERVICE_ON_START - enable sonic-host-server for mgmt-framework and/or
 # gnmi containers to access host functionality by default
-ENABLE_HOST_SERVICE_ON_START = y
+ENABLE_HOST_SERVICE_ON_START = n
 
 # INCLUDE_RESTAPI - build docker-sonic-restapi for configuring the switch using REST APIs
 INCLUDE_RESTAPI ?= n
 
 # INCLUDE_NAT - build docker-nat for nat support
-INCLUDE_NAT = y
+INCLUDE_NAT = n
 
 # INCLUDE_DHCP_RELAY - build and install dhcp-relay package
-INCLUDE_DHCP_RELAY = y
+INCLUDE_DHCP_RELAY = n
 
 # INCLUDE_DHCP_SERVER - build dhcp-server package and enable based on config_db.json
 INCLUDE_DHCP_SERVER ?= n
@@ -159,32 +159,32 @@ INCLUDE_DHCP_SERVER ?= n
 INCLUDE_P4RT = n
 
 # INCLUDE_VS_DASH_SAI - build dash-sai for VS
-INCLUDE_VS_DASH_SAI ?= y
+INCLUDE_VS_DASH_SAI ?= n
 
 # ENABLE_AUTO_TECH_SUPPORT - Enable the configuration for event-driven techsupport & coredump mgmt feature
-ENABLE_AUTO_TECH_SUPPORT = y
+ENABLE_AUTO_TECH_SUPPORT = n
 
 # ENABLE_TRANSLIB_WRITE - Enable translib write/config operations via the gNMI interface.
 # Uncomment to enable:
 # ENABLE_TRANSLIB_WRITE = y
 
 # ENABLE_NATIVE_WRITE - Enable native write/config operations via the gNMI interface.
-ENABLE_NATIVE_WRITE = y
+ENABLE_NATIVE_WRITE = n
 
 # INCLUDE_MACSEC - build docker-macsec for macsec support
-INCLUDE_MACSEC = y
+INCLUDE_MACSEC = n
 
 # INCLUDE_GBSYNCD - build docker-gbsyncd-* for gearbox support
-INCLUDE_GBSYNCD ?= y
+INCLUDE_GBSYNCD ?= n
 
 # INCLUDE_TEAMD - build docker-teamd for LAG protocol support
-INCLUDE_TEAMD ?= y
+INCLUDE_TEAMD ?= n
 
 # INCLUDE_ROUTER_ADVERTISER - build docker-router-advertiser for router advertisements support
-INCLUDE_ROUTER_ADVERTISER ?= y
+INCLUDE_ROUTER_ADVERTISER ?= n
 
 # INCLUDE_TEAMD - build docker-ha for DASH HA support
-INCLUDE_DASH_HA ?= y
+INCLUDE_DASH_HA ?= n
 # INCLUDE_KUBERNETES - if set to y kubernetes packages are installed to be able to
 # run as worker node in kubernetes cluster.
 INCLUDE_KUBERNETES ?= n
@@ -201,7 +201,7 @@ KUBERNETES_CNI_VERSION = 0.8.7-00
 KUBERNETES_CRI_TOOLS_VERSION = 1.26.0-00
 K8s_GCR_IO_PAUSE_VERSION = 3.5
 
-# INCLUDE_KUBERNETES_MASTER - if set to y kubernetes packages are installed o be able 
+# INCLUDE_KUBERNETES_MASTER - if set to y kubernetes packages are installed o be able
 # to run as master node in kubernetes cluster
 INCLUDE_KUBERNETES_MASTER ?= n
 
@@ -241,8 +241,8 @@ SONIC_ENABLE_IMAGE_SIGNATURE ?= n
 # SECURE_UPGRADE_MODE - enum value for secure upgrade mode, valid options are "dev", "prod" and "no_sign"
 # SECURE_UPGRADE_PROD_SIGNING_TOOL - path to a vendor signing tool for production flow.
 # SECURE_UPGRADE_PROD_TOOL_ARGS - Extra arguments options for vendor to use to run his specific prod signing script
-SECURE_UPGRADE_DEV_SIGNING_KEY ?= 
-SECURE_UPGRADE_SIGNING_CERT ?= 
+SECURE_UPGRADE_DEV_SIGNING_KEY ?=
+SECURE_UPGRADE_SIGNING_CERT ?=
 SECURE_UPGRADE_MODE = "no_sign"
 SECURE_UPGRADE_PROD_SIGNING_TOOL ?=
 SECURE_UPGRADE_PROD_TOOL_ARGS ?=
@@ -264,11 +264,11 @@ TRUSTED_GPG_URLS = https://packages.trafficmanager.net/debian/public_key.gpg,htt
 SONIC_VERSION_CONTROL_COMPONENTS ?= py2,py3,web,git,docker
 
 ifeq ($(SONIC_VERSION_CONTROL_COMPONENTS),all)
-override MIRROR_SNAPSHOT = y
+override MIRROR_SNAPSHOT = n
 endif
 
 ifneq (,$(findstring deb,$(SONIC_VERSION_CONTROL_COMPONENTS)))
-override MIRROR_SNAPSHOT = y
+override MIRROR_SNAPSHOT = n
 endif
 
 # MIRROR_SNAPSHOT - support mirror snapshot flag
@@ -294,7 +294,7 @@ REGISTRY_SERVER_PATH ?=
 BUILD_MULTIASIC_KVM = n
 
 # INCLUDE_MUX - build docker-mux for dual ToR (Gemini)
-INCLUDE_MUX = y
+INCLUDE_MUX = n
 
 # ENABLE_ASAN - enable address sanitizer
 ENABLE_ASAN ?= n
@@ -303,14 +303,14 @@ ENABLE_ASAN ?= n
 DEFAULT_CONTAINER_REGISTRY ?= publicmirror.azurecr.io
 
 # INCLUDE_BOOTCHART - install systemd-bootchart
-INCLUDE_BOOTCHART = y
+INCLUDE_BOOTCHART = n
 
 # ENABLE_BOOTCHART - whether to enable systemd-bootchart on boot
 ENABLE_BOOTCHART = n
 
 # INCLUDE_FIPS - support FIPS feature, only for amd64 or arm64, armhf not supported yet
 # ENABLE_FIPS - support FIPS flag, if enabled, no additional config requred for the image to support FIPS
-INCLUDE_FIPS ?= y
+INCLUDE_FIPS ?= n
 ENABLE_FIPS ?= n
 
 # SONIC_SLAVE_DOCKER_DRIVER - set the sonic slave docker storage driver
@@ -325,7 +325,7 @@ PIP_HTTP_TIMEOUT ?= 60
 # BUILD_REDUCE_IMAGE_SIZE - reduce the image size as much as possbible
 BUILD_REDUCE_IMAGE_SIZE = n
 
-# SONIC_PTF_ENV_PY_VER - SONiC PTF test Python version. Set to 'mixed' to build the 
+# SONIC_PTF_ENV_PY_VER - SONiC PTF test Python version. Set to 'mixed' to build the
 # image with both Python 2 and 3. Set to 'py3' to build a Python 3 only image
 SONIC_PTF_ENV_PY_VER = py3
 

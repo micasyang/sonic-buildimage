@@ -174,28 +174,31 @@ fi
 cat files/initramfs-tools/modules | sudo tee -a $FILESYSTEM_ROOT/etc/initramfs-tools/modules > /dev/null
 
 ## Hook into initramfs: change fs type from vfat to ext4 on arista switches
+if [[ $CONFIGURED_PLATFORM == bmc ]]; then
 sudo mkdir -p $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/
 sudo cp files/initramfs-tools/arista-convertfs $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/arista-convertfs
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/arista-convertfs
 sudo cp files/initramfs-tools/arista-hook $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/arista-hook
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/arista-hook
+fi
 sudo cp files/initramfs-tools/mke2fs $FILESYSTEM_ROOT/etc/initramfs-tools/hooks/mke2fs
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/hooks/mke2fs
 sudo cp files/initramfs-tools/setfacl $FILESYSTEM_ROOT/etc/initramfs-tools/hooks/setfacl
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/hooks/setfacl
 
+if [[ $CONFIGURED_PLATFORM == bmc ]]; then
 # Hook into initramfs: rename the management interfaces on arista switches
 sudo cp files/initramfs-tools/arista-net $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/arista-net
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/arista-net
-
+fi
 # Hook into initramfs: resize root partition after migration from another NOS to SONiC on Dell switches
 sudo cp files/initramfs-tools/resize-rootfs $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/resize-rootfs
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/resize-rootfs
-
+if [[ $CONFIGURED_PLATFORM == bmc ]]; then
 # Hook into initramfs: upgrade SSD from initramfs
 sudo cp files/initramfs-tools/ssd-upgrade $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/ssd-upgrade
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/ssd-upgrade
-
+fi
 # Hook into initramfs: run fsck to repair a non-clean filesystem prior to be mounted
 sudo cp files/initramfs-tools/fsck-rootfs $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/fsck-rootfs
 sudo chmod +x $FILESYSTEM_ROOT/etc/initramfs-tools/scripts/init-premount/fsck-rootfs
@@ -307,13 +310,13 @@ echo "$USERNAME:$PASSWORD" | sudo LANG=C chroot $FILESYSTEM_ROOT chpasswd
 ## Create redis group
 sudo LANG=C chroot $FILESYSTEM_ROOT groupadd -f redis
 sudo LANG=C chroot $FILESYSTEM_ROOT usermod -aG redis $USERNAME
-
+if [[ $CONFIGURED_PLATFORM == bmc ]]; then
 if [[ $CONFIGURED_ARCH == amd64 ]]; then
     ## Pre-install hardware drivers
     sudo LANG=C chroot $FILESYSTEM_ROOT apt-get -y install      \
         firmware-linux-nonfree
 fi
-
+fi
 ## Pre-install the fundamental packages
 ## Note: gdisk is needed for sgdisk in install.sh
 ## Note: parted is needed for partprobe in install.sh
@@ -539,8 +542,10 @@ sudo LANG=C DEBIAN_FRONTEND=noninteractive chroot $FILESYSTEM_ROOT apt-get -y in
 # docker Python API package is needed by Ansible docker module as well as some SONiC applications
 sudo https_proxy=$https_proxy LANG=C chroot $FILESYSTEM_ROOT pip3 install 'docker==7.1.0'
 
-# Install scapy
-sudo https_proxy=$https_proxy LANG=C chroot $FILESYSTEM_ROOT pip3 install 'scapy==2.4.4'
+if [[ $CONFIGURED_PLATFORM != bmc ]]; then
+    # Install scapy
+    sudo https_proxy=$https_proxy LANG=C chroot $FILESYSTEM_ROOT pip3 install 'scapy==2.4.4'
+fi
 
 ## Note: keep pip installed for maintainance purpose
 
@@ -747,6 +752,10 @@ if [[ $SECURE_UPGRADE_MODE == 'dev' || $SECURE_UPGRADE_MODE == "prod" ]]; then
     echo "Secure Boot support build stage: END."
 fi
 
+if [[ $CONFIGURED_PLATFORM == bmc ]]; then
+    sudo $PLATFORM_DIR/$CONFIGURED_PLATFORM/scripts/bmc-initramfs-trim.py "$FILESYSTEM_ROOT"
+fi
+
 ## Update initramfs
 sudo chroot $FILESYSTEM_ROOT update-initramfs -u
 ## Convert initrd image to u-boot format
@@ -783,6 +792,11 @@ fi
 SONIC_VERSION_CACHE=${SONIC_VERSION_CACHE}  \
 	DBGOPT="${DBGOPT}" \
 	scripts/collect_host_image_version_files.sh $CONFIGURED_ARCH $IMAGE_DISTRO $TARGET_PATH $FILESYSTEM_ROOT
+
+if [[ $CONFIGURED_PLATFORM == bmc ]]; then
+    sudo $PLATFORM_DIR/$CONFIGURED_PLATFORM/scripts/build-optimize-bmc.sh $FILESYSTEM_ROOT $PLATFORM_DIR $IMAGE_DISTRO
+    sudo $PLATFORM_DIR/$CONFIGURED_PLATFORM/scripts/build-optimize-bmc.py "$FILESYSTEM_ROOT" --image-type "$IMAGE_TYPE" --hardlinks var/lib/docker --hardlinks usr/share/sonic/device
+fi
 
 # Remove GCC
 sudo LANG=C DEBIAN_FRONTEND=noninteractive chroot $FILESYSTEM_ROOT apt-get -y remove gcc

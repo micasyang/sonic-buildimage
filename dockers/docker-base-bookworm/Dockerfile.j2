@@ -3,9 +3,9 @@
 {% if CONFIGURED_ARCH == "armhf" and (MULTIARCH_QEMU_ENVIRON == "y" or CROSS_BUILD_ENVIRON == "y") %}
 FROM --platform=linux/arm/v7 {{ prefix }}debian:bookworm
 {% elif CONFIGURED_ARCH == "arm64" and (MULTIARCH_QEMU_ENVIRON == "y" or CROSS_BUILD_ENVIRON == "y") %}
-FROM --platform=linux/arm64 {{ prefix }}debian:bookworm
+FROM --platform=linux/arm64 {{ prefix }}debian:bookworm-slim
 {% else %}
-FROM {{ prefix }}{{DOCKER_BASE_ARCH}}/debian:bookworm
+FROM {{ prefix }}{{DOCKER_BASE_ARCH}}/debian:bookworm-slim
 {% endif %}
 
 # Clean documentation in FROM image
@@ -36,8 +36,8 @@ COPY ["no-check-valid-until", "/etc/apt/apt.conf.d"]
 RUN apt update &&            \
     apt -y install           \
         curl                 \
-        less                 \
-        perl                 \
+        # less                 \
+        # perl                 \
         procps               \
         python3              \
         python3-distutils    \
@@ -55,13 +55,13 @@ RUN apt update &&            \
         libjansson4          \
 # ip and ifconfig utility missing in docker for arm arch
         iproute2             \
-        net-tools            \
+        # net-tools            \
 # for processing/handling json files in bash environment
-        jq                   \
+        jq
 # for sairedis zmq rpc channel
-        libzmq5              \
-        libwrap0            \
-        libatomic1
+        # libzmq5              \
+        # libwrap0            \
+        # libatomic1
 
 # Add a config file to allow pip to install packages outside of apt/the Debian repos
 COPY ["pip.conf", "/etc/pip.conf"]
@@ -104,6 +104,8 @@ RUN apt-get clean -y                     && \
     apt-get autoclean -y                 && \
     apt-get autoremove -y                && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/.cache
+    
+RUN rm -rf /usr/lib/python*/test
 
 COPY ["etc/rsyslog.conf", "/etc/rsyslog.conf"]
 COPY ["etc/rsyslog.d/*", "/etc/rsyslog.d/"]

@@ -32,13 +32,13 @@ IMAGE_VERSION="${SONIC_IMAGE_VERSION}"
 generate_kvm_image()
 {
     NUM_ASIC=$1
-    if [ $NUM_ASIC == 4 ]; then 
+    if [ $NUM_ASIC == 4 ]; then
          KVM_IMAGE=$OUTPUT_KVM_4ASIC_IMAGE
          RECOVERY_ISO=$onie_recovery_kvm_4asic_image
     elif [ $NUM_ASIC == 6 ]; then
          KVM_IMAGE=$OUTPUT_KVM_6ASIC_IMAGE
          RECOVERY_ISO=$onie_recovery_kvm_6asic_image
-    else 
+    else
          KVM_IMAGE=$OUTPUT_KVM_IMAGE
          RECOVERY_ISO=$onie_recovery_image
          NUM_ASIC=1
@@ -263,6 +263,11 @@ elif [ "$IMAGE_TYPE" = "bfb" ]; then
     sudo -E ./platform/${CONFIGURED_PLATFORM}/installer/create_sonic_image --kernel $KVERSION "$secure_upgrade_keys"
 
     sudo chown $USER $OUTPUT_BFB_IMAGE
+
+elif [ "$IMAGE_TYPE" = "bmc" ]; then
+    generate_device_list "./installer/platforms_asic"
+    generate_onie_installer_image
+    generate_kvm_image
 
 else
     echo "Error: Non supported image type $IMAGE_TYPE"

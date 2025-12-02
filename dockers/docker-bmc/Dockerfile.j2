@@ -1,0 +1,56 @@
+{% from "dockers/dockerfile-macros.j2" import install_debian_packages, install_python_wheels, copy_files %}
+FROM docker-config-engine-bookworm-{{DOCKER_USERNAME}}:{{DOCKER_USERTAG}}
+
+ARG docker_container_name
+ARG image_version
+RUN [ -f /etc/rsyslog.conf ] && sed -ri "s/%syslogtag%/$docker_container_name#%syslogtag%/;" /etc/rsyslog.conf
+
+# Make apt-get non-interactive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Pass the image_version to container
+ENV IMAGE_VERSION=$image_version
+
+# Update apt's cache of available packages
+RUN apt-get update && \
+    apt-get -y install \
+        liburing2 \
+        libgpiod2 \
+        libssl3 \
+        libnghttp2-14 \
+        libtinyxml2-9 \
+        libfmt9 \
+        libldap-2.5-0
+
+RUN set -eux; \
+    groupadd redfish; \
+    groupadd ipmi; \
+    groupadd hostconsole; \
+    groupadd priv-admin; \
+    groupadd priv-operator; \
+    groupadd priv-user; \
+    echo 'root:123' | chpasswd; \
+    usermod -aG redfish,priv-admin root
+RUN mkdir -p /usr/share/phosphor-inventory-manager
+
+{% if docker_bmc_debs.strip() -%}
+# Copy built Debian packages
+{{ copy_files("debs/", docker_bmc_debs.split(' '), "/debs/") }}
+
+# Install built Debian packages and implicitly install their dependencies
+{{ install_debian_packages(docker_bmc_debs.split(' ')) }}
+{%- endif %}
+
+
+# Clean up
+RUN apt-get clean -y        && \
+    apt-get autoclean -y    && \
+    apt-get autoremove -y   && \
+    rm -rf /debs
+COPY ["pwhistory.conf", "/etc/security/"]
+COPY ["pwquality.conf", "/etc/security/"]
+COPY ["docker-init.sh", "/usr/bin/"]
+COPY ["docker-bmc.supervisord.conf.j2", "/usr/share/sonic/templates/"]
+COPY ["files/supervisor-proc-exit-listener", "/usr/bin"]
+
+ENTRYPOINT ["/usr/bin/docker-init.sh"]
