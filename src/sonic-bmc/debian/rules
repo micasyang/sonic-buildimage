@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+	make
+
+override_dh_auto_install:
+	install -D -m 755 sonic-bmc debian/sonic-bmc/usr/bin/sonic-bmc
+
+override_dh_auto_clean:
+	make clean

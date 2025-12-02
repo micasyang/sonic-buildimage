@@ -1,0 +1,5 @@
+sonic-bmc (0.1) bookworm; urgency=medium
+
+  * Initial release: Simple syslog hello world loop.
+
+ -- Your Name <your@email.com>  Fri, 24 Oct 2025 00:00:00 +0000
