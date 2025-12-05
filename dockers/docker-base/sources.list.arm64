@@ -1,7 +1,10 @@
-## Debian mirror for ARM repo
-
+## Debian mirror for ARM repo (bookworm)
 # ARM64 repo
-deb [arch=arm64] http://archive.debian.org/debian jessie main contrib non-free
-deb-src [arch=arm64] http://archive.debian.org/debian jessie main contrib non-free
-deb-src [arch=arm64] http://archive.debian.org/debian jessie-backports main contrib non-free
-deb [arch=arm64] http://archive.debian.org/debian jessie-backports main contrib non-free
+deb [arch=arm64] http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb-src [arch=arm64] http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+
+deb [arch=arm64] http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+deb-src [arch=arm64] http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+
+deb [arch=arm64] http://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
+deb-src [arch=arm64] http://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware

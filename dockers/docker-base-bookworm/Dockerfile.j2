@@ -3,9 +3,9 @@
 {% if CONFIGURED_ARCH == "armhf" and (MULTIARCH_QEMU_ENVIRON == "y" or CROSS_BUILD_ENVIRON == "y") %}
 FROM --platform=linux/arm/v7 {{ prefix }}debian:bookworm
 {% elif CONFIGURED_ARCH == "arm64" and (MULTIARCH_QEMU_ENVIRON == "y" or CROSS_BUILD_ENVIRON == "y") %}
-FROM --platform=linux/arm64 {{ prefix }}debian:bookworm-slim
+FROM --platform=linux/arm64 {{ prefix }}debian:bookworm
 {% else %}
-FROM {{ prefix }}{{DOCKER_BASE_ARCH}}/debian:bookworm-slim
+FROM {{ prefix }}{{DOCKER_BASE_ARCH}}/debian:bookworm
 {% endif %}
 
 # Clean documentation in FROM image
@@ -30,6 +30,9 @@ COPY ["dpkg_01_drop", "/etc/dpkg/dpkg.cfg.d/01_drop"]
 COPY ["sources.list.{{ CONFIGURED_ARCH }}", "/etc/apt/sources.list"]
 COPY ["no_install_recommend_suggest", "/etc/apt/apt.conf.d"]
 COPY ["no-check-valid-until", "/etc/apt/apt.conf.d"]
+
+# Debug: show which sources.list got into the image
+RUN echo "=== /etc/apt/sources.list (build context)" && cat /etc/apt/sources.list
 
 # Update apt cache and
 # pre-install fundamental packages
