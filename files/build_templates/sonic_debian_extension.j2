@@ -260,7 +260,16 @@ sudo https_proxy=$https_proxy LANG=C chroot $FILESYSTEM_ROOT pip3 install system
 
 # Install pygobject from apt repos. The version in Debian is
 # a bit older than what is in pip, but it should be fine.
-sudo LANG=C DEBIAN_FRONTEND=noninteractive chroot $FILESYSTEM_ROOT apt-get -y install python3-gi
+# Install python3-gi only if chroot mounts are present; mount/umount to avoid py3compile crashes
+sudo mount --bind /dev $FILESYSTEM_ROOT/dev
+sudo mount --bind /dev/pts $FILESYSTEM_ROOT/dev/pts
+sudo mount --bind /proc $FILESYSTEM_ROOT/proc
+sudo mount --bind /sys $FILESYSTEM_ROOT/sys
+sudo LANG=C DEBIAN_FRONTEND=noninteractive chroot $FILESYSTEM_ROOT apt-get -y install python3-gi || true
+sudo LANG=C chroot $FILESYSTEM_ROOT /bin/bash -c "mountpoint -q /dev/pts && umount /dev/pts"
+sudo LANG=C chroot $FILESYSTEM_ROOT /bin/bash -c "mountpoint -q /dev && umount /dev"
+sudo LANG=C chroot $FILESYSTEM_ROOT /bin/bash -c "mountpoint -q /proc && umount /proc"
+sudo LANG=C chroot $FILESYSTEM_ROOT /bin/bash -c "mountpoint -q /sys && umount /sys"
 
 # Install SONiC host services package
 install_pip_package {{sonic_host_services_py3_wheel_path}}

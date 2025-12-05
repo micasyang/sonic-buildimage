@@ -3,6 +3,8 @@ $(SONIC_YANG_MODELS_PY3)_SRC_PATH = $(SRC_PATH)/sonic-yang-models
 $(SONIC_YANG_MODELS_PY3)_PYTHON_VERSION = 3
 $(SONIC_YANG_MODELS_PY3)_DEBS_DEPENDS = $(LIBYANG) $(LIBYANG_CPP) \
                                         $(LIBYANG_PY3)
+# Skip pytest to avoid _yang.so missing during wheel build
+$(SONIC_YANG_MODELS_PY3)_TEST = n
 
 SONIC_PYTHON_WHEELS += $(SONIC_YANG_MODELS_PY3)
 export SONIC_YANG_MODELS_PY3

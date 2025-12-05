@@ -1,0 +1,43 @@
+/dts-v1/;
+
+/ {
+    description = "SONiC BMC fitImage";
+    #address-cells = <1>;
+
+    images {
+        kernel {
+            description = "Linux kernel";
+            data = /incbin/("/boot/vmlinuz-6.1.0-29-2-arm64");
+            type = "kernel";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+            load = <0x80080000>;
+            entry = <0x80080000>;
+            hash@1 {
+                algo = "sha1";
+            };
+        };
+        initramfs {
+            description = "Initramfs";
+            data = /incbin/("/boot/initrd.img-6.1.0-29-2-arm64");
+            type = "ramdisk";
+            arch = "arm64";
+            os = "linux";
+            compression = "gzip";
+            load = <0x85000000>;
+            entry = <0x85000000>;
+            hash@1 {
+                algo = "sha1";
+            };
+        };
+    };
+
+    configurations {
+        default = "conf";
+        conf {
+            kernel = "kernel";
+            ramdisk = "initramfs";
+        };
+    };
+};

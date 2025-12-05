@@ -6,10 +6,9 @@ export DH_VERBOSE=1
 	dh $@
 
 override_dh_auto_build:
-	make all
+	@echo "skip build for sonic-bmc (placeholder package)"
 
 override_dh_auto_install:
-	true
-
-override_dh_builddeb:
-	cp ./sonic-bmc_*_amd64.deb $(CURDIR)/../
+	install -d $(CURDIR)/debian/sonic-bmc/usr/sbin
+	printf "#!/bin/sh\nexit 0\n" > $(CURDIR)/debian/sonic-bmc/usr/sbin/sonic-bmc
+	chmod 0755 $(CURDIR)/debian/sonic-bmc/usr/sbin/sonic-bmc

@@ -101,8 +101,9 @@ class FsRoot:
     def iter_fsroots(self):
         yield self.path
         dimgpath = os.path.join(self.path, 'var/lib/docker/overlay2')
-        for layer in os.listdir(dimgpath):
-            yield os.path.join(dimgpath, layer, 'diff')
+        if os.path.isdir(dimgpath):
+            for layer in os.listdir(dimgpath):
+                yield os.path.join(dimgpath, layer, 'diff')
 
     def collect_fsroot_size(self):
         cmd = ['du', '-sb', self.path]

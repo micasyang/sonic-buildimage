@@ -26,6 +26,7 @@ DOCKERFILE_PATH=$(dirname "$DOCKERFILE_TARGET")
 BUILDINFO_PATH="${DOCKERFILE_PATH}/buildinfo"
 BUILDINFO_VERSION_PATH="${BUILDINFO_PATH}/versions"
 DOCKER_PATH=$(dirname $DOCKERFILE)
+REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd)
 
 [ -d $BUILDINFO_PATH ] && rm -rf $BUILDINFO_PATH
 mkdir -p $BUILDINFO_VERSION_PATH
@@ -42,6 +43,15 @@ fi
 
 if [[ "$IMAGENAME" == sonic-slave-* ]] || [[ "$IMAGENAME" == docker-base-* ]] || [[ "$IMAGENAME" == docker-ptf ]]; then
     scripts/build_mirror_config.sh ${DOCKERFILE_PATH} $ARCH $DISTRO
+fi
+
+# Copy cross-apt source templates into docker context if present (relative to repo root)
+CROSS_SRC_DIR="${REPO_ROOT}/files/apt"
+if [ -f "${CROSS_SRC_DIR}/sources.list.cross.arm64" ] || [ -f "${CROSS_SRC_DIR}/sources.list.cross.armhf" ]; then
+	for cross_src in "${CROSS_SRC_DIR}"/sources.list.cross.*; do
+		[ -f "${cross_src}" ] || continue
+		cp "${cross_src}" "${DOCKERFILE_PATH}/"
+	done
 fi
 
 # add script for reproducible build. using sha256 instead of tag for docker base image.
@@ -157,4 +167,3 @@ else
 	# Delete the cache file if version cache is disabled.
 	rm -f ${DOCKER_PATH}/vcache/cache.tgz
 fi
-

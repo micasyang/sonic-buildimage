@@ -6,5 +6,5 @@ Build-Depends: debhelper (>= 9), bzip2
 Standards-Version: 3.9.3
 
 Package: sonic-platform-bmc
-Architecture: amd64
-Description: Sonic BMC platform Module
+Architecture: arm64
+Description: Sonic BMC platform Module (arm64)

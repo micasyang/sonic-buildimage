@@ -26,4 +26,6 @@ ifeq ($(ENABLE_PY2_MODULES), y)
     $(SONIC_CONFIG_ENGINE_PY3)_DEPENDS += $(SONIC_CONFIG_ENGINE_PY2)
 endif
 $(SONIC_CONFIG_ENGINE_PY3)_PYTHON_VERSION = 3
+# Skip pytest to avoid swsscommon _swsscommon.so lookup during wheel build
+$(SONIC_CONFIG_ENGINE_PY3)_TEST = n
 SONIC_PYTHON_WHEELS += $(SONIC_CONFIG_ENGINE_PY3)
