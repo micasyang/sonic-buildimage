@@ -1,12 +1,13 @@
 Source: sonic-bmc
 Section: net
-Priority: extra
-Maintainer: Your Name <your@email.com>
-Build-Depends: debhelper (>= 10), gcc
-Standards-Version: 4.1.1
+Priority: optional
+Maintainer: Your Name <you@example.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Homepage: https://github.com/sonic-net/SONiC
 
 Package: sonic-bmc
 Architecture: amd64
-Depends: libc6
-Description: Simple SONiC BMC module example
- A basic C program that logs "hello world" to syslog every 3 seconds.
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: BMC management module for SONiC
+ This package provides BMC related functionality.

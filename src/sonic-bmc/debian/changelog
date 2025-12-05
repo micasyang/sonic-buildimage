@@ -1,5 +1,5 @@
-sonic-bmc (0.1) bookworm; urgency=medium
+sonic-bmc (1.0) bookworm; urgency=medium
 
-  * Initial release: Simple syslog hello world loop.
+  * Initial release.
 
- -- Your Name <your@email.com>  Fri, 24 Oct 2025 00:00:00 +0000
+ -- Your Name <you@example.com>  Fri, 05 Dec 2025 00:00:00 +0800
