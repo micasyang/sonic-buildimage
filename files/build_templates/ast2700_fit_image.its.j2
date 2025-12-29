@@ -1,0 +1,50 @@
+/dts-v1/;
+
+/ {
+	description = "SONiC AST2700 FIT image";
+	#address-cells = <1>;
+
+	images {
+		kernel {
+			description = "Linux kernel";
+			data = /incbin/("kernel.bin");
+			type = "kernel";
+			arch = "arm64";
+			os = "linux";
+			compression = "none";
+			load = <{{ kernel_load_addr | default("0x80080000") }}>;
+			entry = <{{ kernel_entry_addr | default("0x80080000") }}>;
+		};
+
+		fdt {
+			description = "AST2700 device tree";
+			data = /incbin/("platform.dtb");
+			type = "flat_dt";
+			arch = "arm64";
+			compression = "none";
+		};
+
+		ramdisk {
+			description = "SONiC initramfs";
+			data = /incbin/("initrd.img");
+			type = "ramdisk";
+			arch = "arm64";
+			os = "linux";
+			compression = "{{ ramdisk_compression | default("gzip") }}";
+			load = <{{ ramdisk_load_addr | default("0x83000000") }}>;
+			entry = <{{ ramdisk_load_addr | default("0x83000000") }}>;
+		};
+	};
+
+	configurations {
+		default = "conf";
+
+		conf {
+			description = "SONiC AST2700 configuration";
+			kernel = "kernel";
+			fdt = "fdt";
+			ramdisk = "ramdisk";
+			loadables = "ramdisk";
+		};
+	};
+};

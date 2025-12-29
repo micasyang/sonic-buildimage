@@ -1666,6 +1666,35 @@ $(addprefix $(TARGET_PATH)/, $(SONIC_INSTALLERS)) : $(TARGET_PATH)/% : \
 SONIC_TARGET_LIST += $(addprefix $(TARGET_PATH)/, $(SONIC_INSTALLERS))
 
 ###############################################################################
+## AST2700 flash image packaging
+###############################################################################
+
+AST2700_FLASH_DIR := $(TARGET_PATH)/ast2700
+AST2700_FLASH_IMAGE := $(AST2700_FLASH_DIR)/flash-$(CONFIGURED_PLATFORM).bin
+AST2700_FLASH_PREREQ := $(TARGET_PATH)/sonic-$(CONFIGURED_PLATFORM).bin
+
+$(AST2700_FLASH_DIR):
+	mkdir -p $@
+
+$(AST2700_FLASH_IMAGE) : .platform $(AST2700_FLASH_DIR) $(AST2700_FLASH_PREREQ)
+	$(HEADER)
+	AST2700_FLASH_SIZE=$(AST2700_FLASH_SIZE) \
+	AST2700_FIT_OFFSET_KB=$(AST2700_FIT_OFFSET_KB) \
+	AST2700_ROOTFS_OFFSET_MB=$(AST2700_ROOTFS_OFFSET_MB) \
+	AST2700_KERNEL_LOAD_ADDR=$(AST2700_KERNEL_LOAD_ADDR) \
+	AST2700_KERNEL_ENTRY_ADDR=$(AST2700_KERNEL_ENTRY_ADDR) \
+	AST2700_RAMDISK_LOAD_ADDR=$(AST2700_RAMDISK_LOAD_ADDR) \
+	AST2700_FLASH_PADDING_MB=$(AST2700_FLASH_PADDING_MB) \
+	./scripts/package_ast2700_flash.sh \
+		--platform $(CONFIGURED_PLATFORM) \
+		--uboot-dir $(OPENBMC_UBOOT_DIR) \
+		--output $@ $(LOG)
+	$(FOOTER)
+
+.PHONY: ast2700-flash
+ast2700-flash: $(AST2700_FLASH_IMAGE)
+
+###############################################################################
 ## Clean targets
 ###############################################################################
 
