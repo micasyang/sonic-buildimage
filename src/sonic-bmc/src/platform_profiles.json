@@ -1,0 +1,44 @@
+[
+  {
+    "name": "grandteton",
+    "platform_aliases": [
+      "x86_64-facebook_grandteton-r0",
+      "grand_teton"
+    ],
+    "board_id_aliases": {
+      "grandteton_bmc": [
+        "grandteton_bmc_evt",
+        "grandteton_bmc_dvt"
+      ]
+    },
+    "description": "Meta Grand Teton BMC (example entry; extend as needed)"
+  },
+  {
+    "name": "m2_w6940_64oc",
+    "platform_aliases": [
+      "m2-w6940-64oc",
+      "x86_64-m2_w6940_64oc-r0"
+    ],
+    "board_id_aliases": {
+      "0x40d7": [
+        "m2_w6940_64oc",
+        "m2-w6940-64oc"
+      ]
+    },
+    "description": "Whitebox M2-W6940-64OC BMC"
+  },
+  {
+    "name": "m2_w6950_64hc",
+    "platform_aliases": [
+      "m2-w6950-64hc",
+      "x86_64-m2_w6950_64hc-r0"
+    ],
+    "board_id_aliases": {
+      "0x4121": [
+        "m2_w6950_64hc",
+        "m2-w6950-64hc"
+      ]
+    },
+    "description": "Whitebox M2-W6950-64HC BMC"
+  }
+]

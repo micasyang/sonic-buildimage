@@ -11,6 +11,12 @@
 #
 # By default this script does nothing.
 
+# Populate /etc/device/.productname and .board_id as early as possible
+if [ -x /usr/local/bin/platform_detect.py ]; then
+    /usr/local/bin/platform_detect.py || \
+        echo "platform_detect.py failed (non-fatal)" 1>&2
+fi
+
 SONIC_VERSION=$(cat /etc/sonic/sonic_version.yml | grep "build_version" | sed -e "s/build_version: //g;s/'//g")
 FIRST_BOOT_FILE="/host/image-${SONIC_VERSION}/platform/firsttime"
 

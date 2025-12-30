@@ -12,3 +12,9 @@ override_dh_auto_install:
 	install -d $(CURDIR)/debian/sonic-bmc/usr/sbin
 	printf "#!/bin/sh\nexit 0\n" > $(CURDIR)/debian/sonic-bmc/usr/sbin/sonic-bmc
 	chmod 0755 $(CURDIR)/debian/sonic-bmc/usr/sbin/sonic-bmc
+	install -d $(CURDIR)/debian/sonic-bmc/usr/local/bin
+	install -m 0755 $(CURDIR)/src/platform_detect.py \
+		$(CURDIR)/debian/sonic-bmc/usr/local/bin/platform_detect.py
+	install -d $(CURDIR)/debian/sonic-bmc/usr/local/share/platform_detect
+	install -m 0644 $(CURDIR)/src/platform_profiles.json \
+		$(CURDIR)/debian/sonic-bmc/usr/local/share/platform_detect/platform_profiles.json
